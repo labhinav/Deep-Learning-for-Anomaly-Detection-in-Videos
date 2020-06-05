@@ -1,8 +1,10 @@
 #first 2 lines and 4th line not required on machines other than mine
 import sys
-sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages') # in order to import cv2 under python3
+if '/opt/ros/kinetic/lib/python2.7/dist-packages' in sys.path:
+    sys.path.remove('/opt/ros/kinetic/lib/python2.7/dist-packages') # in order to import cv2 under python3
+    import cv2
+    sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages') # append back in order to import rospy     # for capturing videos
 import cv2
-sys.path.append('/opt/ros/kinetic/lib/python2.7/dist-packages') # append back in order to import rospy     # for capturing videos
 import numpy as np    # for mathematical operations
 from skimage.transform import resize   # for resizing images
 from cv2 import VideoWriter, VideoWriter_fourcc
@@ -19,7 +21,7 @@ while(cap.isOpened()):
     frameId = cap.get(1) #current frame number
     ret, frame = cap.read()
     a = resize(frame, preserve_range=True, output_shape=(128,128)).astype(np.uint8) #reshape frame to 128x128x3
-        video.write(a) #write frame to generated video
+    video.write(a) #write frame to generated video
     if(frameId % 16 == 0 and frameId>0):
         X1=np.stack(X) #convert X from list to numpy array
         Y.append(X1) 
