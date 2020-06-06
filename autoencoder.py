@@ -1,11 +1,11 @@
 import numpy as np
 import tensorflow as tf
-import keras
-from keras import layers
-from keras.layers import Input, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv3D, LeakyReLU, Conv3DTranspose
-from keras.layers import AveragePooling2D, MaxPool3D, Dropout, GlobalMaxPooling2D, GlobalAveragePooling2D
-from keras.models import Model
-import keras.backend as K
+from tensorflow import keras
+from tensorflow.keras import layers
+from tensorflow.keras.layers import Input, Dense, Activation, ZeroPadding2D, BatchNormalization, Flatten, Conv3D, LeakyReLU, Conv3DTranspose
+from tensorflow.keras.layers import AveragePooling2D, MaxPool3D, Dropout, GlobalMaxPooling2D, GlobalAveragePooling2D
+from tensorflow.keras.models import Model
+import tensorflow.keras.backend as K
 
 def AutoEncoderModel():
     #encoder
