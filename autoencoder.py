@@ -53,7 +53,7 @@ def AutoEncoderModel():
     return model
 
 def custom_loss(new, original):
-  reconstruction_error = lambd*K.mean(K.square(new-original))
+  reconstruction_error =K.mean(K.square(new-original))
   return reconstruction_error
 
 if __name__=="__main__":
