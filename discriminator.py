@@ -51,7 +51,7 @@ def create_discriminator_model():
     X = BatchNormalization()(X)
     # activation done with loss fn
     # for numerical stability
-    X = Dense(1, activation=None)(X)
+    X = Dense(1, activation='sigmoid')(X)
 
     model = Model(inputs=X_input, outputs=X, name="Discriminator")
 
@@ -61,7 +61,7 @@ def create_discriminator_model():
 if __name__ == "__main__":
     discriminator = create_discriminator_model()
     opt = keras.optimizers.Adam(lr=0.001)
-    loss = BinaryCrossentropy(from_logits=True)
+    loss = BinaryCrossentropy()
     discriminator.compile(loss=loss,
                           optimizer=opt,
                           metrics=['accuracy'])
