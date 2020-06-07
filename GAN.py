@@ -53,10 +53,9 @@ class GAN():
                 # The generator wants the discriminator to label the generated samples as valid (ones)
                 valid_y = np.array([1] * mini_batch_size)
                 # Train the generator
-                g_loss = self.combined.train_on_batch(minibatch, valid_y)
-
-                 # Plot the progress
-                print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[1], g_loss))
+                g_loss = self.combined.train_on_batch(minibatch, {'valid': valid_y,'modified_vid':minibatch})
+            # Plot the progress
+            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[1], g_loss))
 
 if __name__ == '__main__':
     gan = GAN()
