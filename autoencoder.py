@@ -10,39 +10,39 @@ import tensorflow.keras.backend as K
 def AutoEncoderModel():
     #encoder
     X_input=Input((16,128,128,3))
-    #not sure which axis to use for BatchNorm, please check and update
+
     X=Conv3D(32,3,padding='same')(X_input)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     X=MaxPool3D(pool_size=(2,2,2),strides=(2,2,2),padding='valid')(X)
     #current shape is 8x64x64x32
     X=Conv3D(48,3,padding='same')(X)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     X=MaxPool3D(pool_size=(2,2,2),strides=(2,2,2),padding='valid')(X)
     #current shape is 4x32x32x48
     X=Conv3D(64,3,padding='same')(X)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     X=MaxPool3D(pool_size=(2,2,2),strides=(2,2,2),padding='valid')(X)
     #current shape is 2x16x16x64
     X=Conv3D(64,3,padding='same')(X)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     X=MaxPool3D(pool_size=(2,2,2),strides=(1,1,1),padding='same')(X)
     #current shape is 2x16x16x64
     #decoder
 
     X=Conv3DTranspose(48,2,strides=(2,2,2),padding='valid')(X)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     #current shape is 4x32x32x48
     X=Conv3DTranspose(32,2,strides=(2,2,2),padding='valid')(X)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     #current shape is 8x64x64x32
     X=Conv3DTranspose(32,2,strides=(2,2,2),padding='valid')(X)
-    X=BatchNormalization(axis=1)(X)
+    X=BatchNormalization()(X)
     X=LeakyReLU()(X)
     #current shape is 16x128x128x32
     X=Conv3D(3,3,strides=(1,1,1),padding='same')(X)
