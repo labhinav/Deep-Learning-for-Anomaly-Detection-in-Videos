@@ -16,29 +16,29 @@ def create_discriminator_model():
     # Convolutional Layers
     # changed the no of filters
     X = Conv3D(filters=32, kernel_size=(2, 2, 2), padding="same")(X_input)
-    X = BatchNormalization(axis=1)(X)
+    X = BatchNormalization()(X)
     X = Activation('relu')(X)
     X = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(X)
 
     X = Conv3D(filters=64, kernel_size=(2, 2, 2), padding="same")(X)
-    X = BatchNormalization(axis=1)(X)
+    X = BatchNormalization()(X)
     X = Activation('relu')(X)
     X = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(X)
 
     X = Conv3D(filters=128, kernel_size=(2, 2, 2), padding="same")(X)
-    X = BatchNormalization(axis=1)(X)
+    X = BatchNormalization()(X)
     X = Activation('relu')(X)
     X = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(X)
 
     X = Conv3D(filters=128, kernel_size=(2, 2, 2), padding="same")(X)
-    X = BatchNormalization(axis=1)(X)
+    X = BatchNormalization()(X)
     X = Activation('relu')(X)
     X = MaxPool3D(pool_size=(2, 2, 2), strides=(2, 2, 2))(X)
 
     # to add the 5th layer change the cap to 32 frames
 
     # X=Conv3D(filters=256,kernel_size=(2,2,2),padding="same")(X)
-    # X=BatchNormalization(axis=1)(X)
+    # X=BatchNormalization()(X)
     # X=Activation('relu')(X)
     # X=MaxPool3D(pool_size=(2,2,2),strides=(2,2,2))(X)
 
