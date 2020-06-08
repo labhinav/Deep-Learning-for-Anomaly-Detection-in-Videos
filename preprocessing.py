@@ -9,8 +9,12 @@ import numpy as np    # for mathematical operations
 from skimage.transform import resize   # for resizing images
 from cv2 import VideoWriter, VideoWriter_fourcc
 count = 0
-videoFile = "Tom and jerry.mp4"
-cap = cv2.VideoCapture(videoFile)   # capturing the video from the given path
+f = open("trainlist.txt", "r")
+videoFile = f.readline()
+videoFile=videoFile.rstrip("\n")
+print(videoFile)
+# cap = cv2.VideoCapture("./Dataset_Samples/Normal_Videos004_x264.mp4")   # capturing the video from the given path
+cap=cv2.VideoCapture(videoFile)
 frameRate = cap.get(5) #frame rate
 x=1
 Y=[] # empty list to store all the segments of videos generated(final output!)
