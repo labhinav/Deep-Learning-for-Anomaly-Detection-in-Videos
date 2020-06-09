@@ -45,7 +45,7 @@ def createMiniBatches(mini_batch_size,input_file):
             print(Y1.shape)
             Y=[]
             print("saving minibatch",mini_batch_count)
-            np.savez('./minibatches/minibatch%d.npz' % (mini_batch_count)) #save Y1 to a numpy array
+            np.savez('./minibatches/minibatch%d.npz' % (mini_batch_count), Y1) #save Y1 to a numpy array
             mini_batch_count=mini_batch_count+1
         print("in loop",videoFile,frameId,total_frames)
         total_frames=total_frames+1
