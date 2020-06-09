@@ -35,7 +35,7 @@ def createMiniBatches(mini_batch_size,input_file):
             continue
 
         a = resize(frame, preserve_range=True, output_shape=(128,128)).astype(np.uint8) #reshape frame to 128x128x3
-        if(total_frames % 16 == 0 and total_frames>0):
+        if(total_frames % mini_batch_size == 0 and total_frames>0):
             X1=np.stack(X) #convert X from list to numpy array
             Y.append(X1) 
             X=[]
