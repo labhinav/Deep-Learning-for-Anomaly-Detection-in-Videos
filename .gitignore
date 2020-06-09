@@ -1,3 +1,4 @@
 # VSCode workspace
 /.vscode/
 /__pycache__/
+/minibatches/
