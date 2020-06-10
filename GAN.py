@@ -12,38 +12,42 @@ import tensorflow.keras.backend as K
 class GAN():
     def __init__(self):
         self.image_shape=(16,128,128,3)
-        opt=keras.optimizers.Adam(lr=0.001)
+        learning_rate=0.03
+        opt=keras.optimizers.Adam(lr=learning_rate)
+        opt1=keras.optimizers.Adam(lr=learning_rate)
+        opt_slow=keras.optimizers.Adam(lr=10*learning_rate)
         #Build and compile the discriminator
         self.discriminator=create_discriminator_model()
         self.discriminator.compile(loss='binary_crossentropy',optimizer=opt,metrics=['accuracy'])
         #Build and compile the generator
         self.generator=AutoEncoderModel()
-        self.generator.compile(loss=custom_loss,optimizer=opt,metrics=['accuracy'])
+        self.generator.compile(loss='mse',optimizer=opt_slow)
 
         #the generator takes a video as input and generates a modified video
-        z=Input(shape=self.image_shape)
-        modified_vid=self.generator(z)
-        # For the combined model we will only train the generator
-        self.discriminator.trainable=False
-         # The valid takes generated images as input and determines validity
-        valid = self.discriminator(modified_vid)
-        # The combined model  (stacked generator and discriminator) takes
-        # video segment as input => generates modified video => determines validity
-        self.combined = Model(z, [valid,modified_vid])
-        # we need multiple losses as we need the normal loss function+reconstruction error
-        # not sure if this is the right way to implement it
-        lossWeights = {"valid": 1.0, "modified_vid": 1.0} #lossweights can be changed later
-        self.combined.compile(loss={'valid':'binary_crossentropy','modified_vid':custom_loss}, optimizer=opt,loss_weights=lossWeights)
+        z = Input(shape=(self.image_shape))
+        img = self.generator(z)
+        self.discriminator.trainable = False
+        validity = self.discriminator(img)
+        self.combined = Model(z, validity)
+        self.combined.compile(loss='binary_crossentropy', optimizer=opt1,metrics=['accuracy'])
 
-    def train(self,epochs,mini_batch_size,input_videos):
+    def train(self,epochs,mini_batch_size):
         #this function will need to be added later
-        minibatches=construct_minibatches(input_videos,mini_batch_size)
         for epoch in range(epochs):
-            for minibatch in minibatches:
+            d_loss_sum=np.zeros(2)
+            reconstruct_error_sum=0
+            g_loss_sum=np.zeros(2)
+            for i in range(68):
                 # ---------------------
                 #  Train Discriminator
                 # ---------------------
+                minibatch=np.load('/kaggle/working/shuffled_minibatch%d.npz' %(i))
+                minibatch=minibatch['arr_0']
+                minibatch=K.cast(minibatch,'float32')
+                #normalize inputs
+                minibatch/=255
                 gen_vids=self.generator.predict(minibatch)
+                #might have to combine these to improve batch norm
                 d_loss_real=self.discriminator.train_on_batch(minibatch,np.ones((mini_batch_size,1)))
                 d_loss_fake=self.discriminator.train_on_batch(gen_vids,np.zeros((mini_batch_size,1)))
                 d_loss=0.5*np.add(d_loss_real,d_loss_fake)
@@ -53,9 +57,17 @@ class GAN():
                 # The generator wants the discriminator to label the generated samples as valid (ones)
                 valid_y = np.array([1] * mini_batch_size)
                 # Train the generator
-                g_loss = self.combined.train_on_batch(minibatch, {'valid': valid_y,'modified_vid':minibatch})
+                g_loss = self.combined.train_on_batch(minibatch,valid_y)
+                reconstruct_error=self.generator.train_on_batch(minibatch,minibatch)
+                d_loss_sum+=d_loss
+                g_loss_sum+=g_loss
+                reconstruct_error_sum+=reconstruct_error
+            g_loss=g_loss_sum/68
+            d_loss=d_loss_sum/68
+            reconstruct_error=reconstruct_error_sum/68
             # Plot the progress
-            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[1], g_loss))
+            print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f, accuracy %.2f%% from which %f is combined loss and %f is reconstruction loss]" % (epoch, d_loss[0], 100*d_loss[1], g_loss[0]+reconstruct_error,g_loss[1],g_loss[0],reconstruct_error))
+        
 
 if __name__ == '__main__':
     gan = GAN()
