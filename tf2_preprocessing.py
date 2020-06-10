@@ -65,6 +65,9 @@ def write_tf_record(file_path, output_path, segments):
     writer = tf.io.TFRecordWriter(rel_path)
     for itr in range(len(segments)):
         # creating record
+        # Corresponding changes are to be made here
+        # if the feature description in tf2_data_loader.py
+        # is changed
         segment = tf.convert_to_tensor(segments[itr], dtype=tf.string)
         segment = tf.train.Feature(bytes_list=tf.train.BytesList(
             value=[tf.io.serialize_tensor(segment).numpy()]
