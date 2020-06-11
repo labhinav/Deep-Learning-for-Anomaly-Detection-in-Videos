@@ -5,10 +5,12 @@ This repository belongs to a team of 5 students from BITS-Pilani. The project wa
 
 
 ### TODO
--[ ]Hyperparameter Tuning
--[ ]Create large train,dev and test dataset(including preprocessing)
--[ ]Write code for testing
--[ ]Visualise Outputs of AutoEncoder
+- [ ] Hyperparameter Tuning
+- [ ] Create large train,dev and test dataset(including preprocessing)
+- [ ] Write code for testing
+- [ ] Visualise Outputs of AutoEncoder
+
+
 NOTE: Please fork the notebook before editing, do not modify the original directly
 
 
