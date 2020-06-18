@@ -3,3 +3,5 @@
 /__pycache__/
 /minibatches/
 /tfrecords/
+/weights/
+/tfrecords2/
