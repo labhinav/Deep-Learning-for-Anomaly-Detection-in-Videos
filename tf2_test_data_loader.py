@@ -34,13 +34,13 @@ def build_test_dataset(dir_path, batch_size=16, file_buffer=500*1024*1024):
     # dropping remainder for now, trouble when parsing - adding labels
     ds = ds.batch(batch_size, drop_remainder=True)
     # parse the records into the correct types
-    ds = ds.map(lambda x: _my_parser(x, batch_size),
+    ds = ds.map(lambda x: _my_test_parser(x, batch_size),
                 num_parallel_calls=tf.data.experimental.AUTOTUNE)
     ds = ds.prefetch(tf.data.experimental.AUTOTUNE)
     return ds
 
 
-def _my_parser(examples, batch_size):
+def _my_test_parser(examples, batch_size):
     '''Parses a batch of serialised tf.train.Example(s)
     Args:
     example: a batch serialised tf.train.Example(s)

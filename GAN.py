@@ -9,6 +9,7 @@ from tensorflow.keras.layers import AveragePooling2D, MaxPool3D, Dropout, Global
 from tensorflow.keras.models import Model
 import tensorflow.keras.backend as K
 from tf2_multi_preprocessing import build_dataset
+from tf2_test_data_loader import build_test_dataset
 class GAN():
     def __init__(self, mini_batch_size):
         self.image_shape=(16,128,128,3)
@@ -18,7 +19,7 @@ class GAN():
         opt_slow=keras.optimizers.Adam(lr=1)
         #Build and compile the discriminator
         self.discriminator=create_discriminator_model()
-        self.discriminator.compile(loss='binary_crossentropy',optimizer=opt,metrics=['accuracy'])
+        self.discriminator.compile(loss='binary_crossentropy',optimizer=opt,metrics=['accuracy',tf.keras.metrics.TruePositives(),tf.keras.metrics.FalsePositives(),tf.keras.metrics.TrueNegatives(),tf.keras.metrics.FalseNegatives()])
         #Build and compile the generator
         self.generator=AutoEncoderModel()
         self.generator.compile(loss='mse',optimizer=opt_slow)
@@ -37,7 +38,7 @@ class GAN():
         #this function will need to be added later
         tf.summary.trace_off()
         for epoch in range(epochs):
-            d_loss_sum=tf.zeros(2)
+            d_loss_sum=tf.zeros(6)
             reconstruct_error_sum=0
             g_loss_sum=tf.zeros(2)
             no_of_minibatches=0
@@ -72,8 +73,20 @@ class GAN():
             # Plot the progress
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f, accuracy %.2f%% from which %f is combined loss and %f is reconstruction loss]" % (epoch, d_loss[0], 100*d_loss[1], g_loss[0]+reconstruct_error,g_loss[1]*100,g_loss[0],reconstruct_error))
         tf.summary.trace_on()
+
+        def test(self,dev_set_path,mini_batch_size):
+        dev_set=build_test_dataset(dev_set_path,batch_size=mini_batch_size,file_buffer=500*1024)
+        no_of_minibatches=0
+        ans_final=tf.zeros(2)
+        for minibatch,labels in dev_set:
+            no_of_minibatches+=1
+            ans=self.discriminator.test_on_batch(minibatch,(labels==0),reset_metrics=False)
+            ans_final=ans
+        print(no_of_minibatches,ans_final[0],ans_final[1],ans_final[2],ans_final[3],ans_final[4],ans_final[5])
+
 if __name__ == '__main__':
     gan = GAN()
+    gan.combined.load_weights('../input/saved-models/weights_epoch35.h5')
     print(gan.combined.summary())
     print(gan.discriminator.summary())
     print(gan.generator.summary())
