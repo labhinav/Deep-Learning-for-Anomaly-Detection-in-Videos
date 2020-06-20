@@ -74,15 +74,15 @@ class GAN():
             print("%d [D loss: %f, acc.: %.2f%%] [G loss: %f, accuracy %.2f%% from which %f is combined loss and %f is reconstruction loss]" % (epoch, d_loss[0], 100*d_loss[1], g_loss[0]+reconstruct_error,g_loss[1]*100,g_loss[0],reconstruct_error))
         tf.summary.trace_on()
 
-        def test(self,dev_set_path,mini_batch_size):
-        dev_set=build_test_dataset(dev_set_path,batch_size=mini_batch_size,file_buffer=500*1024)
-        no_of_minibatches=0
-        ans_final=tf.zeros(2)
-        for minibatch,labels in dev_set:
-            no_of_minibatches+=1
-            ans=self.discriminator.test_on_batch(minibatch,(labels==0),reset_metrics=False)
-            ans_final=ans
-        print(no_of_minibatches,ans_final[0],ans_final[1],ans_final[2],ans_final[3],ans_final[4],ans_final[5])
+    def test(self,dev_set_path,mini_batch_size):
+    dev_set=build_test_dataset(dev_set_path,batch_size=mini_batch_size,file_buffer=500*1024)
+    no_of_minibatches=0
+    ans_final=tf.zeros(2)
+    for minibatch,labels in dev_set:
+        no_of_minibatches+=1
+        ans=self.discriminator.test_on_batch(minibatch,(labels==0),reset_metrics=False)
+        ans_final=ans
+    print(no_of_minibatches,ans_final[0],ans_final[1],ans_final[2],ans_final[3],ans_final[4],ans_final[5])
 
 if __name__ == '__main__':
     gan = GAN()
