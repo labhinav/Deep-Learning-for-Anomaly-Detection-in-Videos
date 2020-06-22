@@ -10,6 +10,7 @@ from tensorflow.keras.models import Model
 import tensorflow.keras.backend as K
 from tf2_multi_preprocessing import build_dataset
 from tf2_test_data_loader import build_test_dataset
+from cv2 import VideoWriter, VideoWriter_fourcc
 class GAN():
     def __init__(self, mini_batch_size):
         self.image_shape=(16,128,128,3)
@@ -75,14 +76,41 @@ class GAN():
         tf.summary.trace_on()
 
     def test(self,dev_set_path,mini_batch_size):
-    dev_set=build_test_dataset(dev_set_path,batch_size=mini_batch_size,file_buffer=500*1024)
-    no_of_minibatches=0
-    ans_final=tf.zeros(2)
-    for minibatch,labels in dev_set:
-        no_of_minibatches+=1
-        ans=self.discriminator.test_on_batch(minibatch,(labels==0),reset_metrics=False)
-        ans_final=ans
-    print(no_of_minibatches,ans_final[0],ans_final[1],ans_final[2],ans_final[3],ans_final[4],ans_final[5])
+        dev_set=build_test_dataset(dev_set_path,batch_size=mini_batch_size,file_buffer=500*1024)
+        no_of_minibatches=0
+        ans_final=tf.zeros(6)
+        for minibatch,labels in dev_set:
+            no_of_minibatches+=1
+            ans=self.discriminator.test_on_batch(minibatch,(labels==0),reset_metrics=False)
+            ans_final=ans
+        print(no_of_minibatches,ans_final[0],ans_final[1],ans_final[2],ans_final[3],ans_final[4],ans_final[5])
+    
+    def test_real_vs_fake(self,dev_set_path,mini_batch_size):
+        dev_set=build_dataset(dev_set_path,batch_size=mini_batch_size,file_buffer=500*1024)
+        ans_final=tf.zeros(6)
+        no_of_minibatches=0
+        for minibatch,labels in dev_set:
+            no_of_minibatches+=1
+            ans=self.discriminator.test_on_batch(minibatch,labels,reset_metrics=False)
+            fake_vals=np.random.random((mini_batch_size,16,128,128,3))
+            ans=self.discriminator.test_on_batch(fake_vals,tf.zeros((mini_batch_size,1)),reset_metrics=False)
+            ans_final=ans
+        print(no_of_minibatches,ans_final[0],ans_final[1],ans_final[2],ans_final[3],ans_final[4],ans_final[5])
+    
+    def visualise_autoencoder_outputs(self,no_of_minibatches):
+        fourcc = VideoWriter_fourcc(*'MP42') #some code required for VideoWriter
+        video = VideoWriter('/kaggle/working/reconstructed_video.avi', fourcc, float(24), (128, 128)) #creates video to store 1st segment
+        for i in range(no_of_minibatches):
+            inp=np.load("../input/tom-and-jerry-clips/minibatches/minibatch%d.npz" % (i))
+            inp=inp['arr_0']
+            gen_vids=self.generator.predict(inp)
+            gen_vids*=255
+            for j in range(16):
+                for k in range(16):
+                    frame = np.uint8(gen_vids[j][k])
+                    print(frame)
+                    break
+                    video.write(frame)
 
 if __name__ == '__main__':
     gan = GAN()

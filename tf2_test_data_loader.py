@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 # Corresponding changes are to be made here
 # if the feature description in tf2_preprocessing.py
 # is changed
-feature_description = {
+test_feature_description = {
     'segment': tf.io.FixedLenFeature([], tf.string),
     'file': tf.io.FixedLenFeature([], tf.string),
     'num': tf.io.FixedLenFeature([], tf.int64),
@@ -49,7 +49,7 @@ def _my_test_parser(examples, batch_size):
     where segment is a tensor of shape (#in_batch, #frames, h, w, #channels)
     '''
     # ex will be a tensor of serialised tensors
-    ex = tf.io.parse_example(examples, features=feature_description)
+    ex = tf.io.parse_example(examples, features=test_feature_description)
     ex['segment'] = tf.map_fn(lambda x: _parse_segment(x),
                               ex['segment'], dtype=tf.uint8)
     # ignoring filename and segment num for now
