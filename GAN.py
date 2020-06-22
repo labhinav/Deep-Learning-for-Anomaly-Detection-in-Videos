@@ -108,8 +108,6 @@ class GAN():
             for j in range(16):
                 for k in range(16):
                     frame = np.uint8(gen_vids[j][k])
-                    print(frame)
-                    break
                     video.write(frame)
 
 if __name__ == '__main__':
